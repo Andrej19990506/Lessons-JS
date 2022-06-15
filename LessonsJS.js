@@ -88,24 +88,27 @@ class TableBuild{
         this.parentElement.appendChild(this.buildtable);
         this.buildtable.appendChild(this.addTable);
         this.buildtable.appendChild(this.deliteTable);
-
-        this.buildtable.onclick = this.inputtext.bind(this);
+        this.buildtable.onclick = this.addTables.bind(this);
+        this.buildtable.onclick = this.deliteTables.bind(this);
     }
 
-    inputtext(event){  
+    addTables(event){  
         let td = event.target.closest('.add-table'); // (1)
         if (!td) return; // (2)
         if (!this.buildtable.contains(td)) return; // (3)
-        if(this.currenCell){
-                this.table.createTable(this.row+1, this.column+1);
-            }
-            this.currenCell = td;
-            //console.log(this);
-        //this.table=new CalcTable(this.parentSelector);
+        //console.log(this.table.createTable)
+        this.table.createTable(this.row+1, this.column+1);
+        this.currenCell = td;
+    }
+    deliteTables(event) {
+        let td = event.target.closest('.delite-table'); // (1)
+        if (!td) return; // (2)
+        if (!this.buildtable.contains(td)) return; // (3)
+        //console.log(this.table.createTable)
+        this.table.createTable(this.row - 1, this.column - 1);
+        this.currenCell = td;
     }
 } 
-    //let table = new CalcTable();
-    //let buildtble = new TableBuild(table)
 
 
     
@@ -130,7 +133,7 @@ class TableCreater{
     clickButton(){
         this.table=new CalcTable(this.parentSelector);
         this.table.createTable(this.inputRow.value , this.inputColumn.value );
-        this.buildtable = new TableBuild(this.parentSelector);
+        this.buildtable = new TableBuild(this.parentSelector, this.table);
         this.buildtable.tableBuild()
 
     }
