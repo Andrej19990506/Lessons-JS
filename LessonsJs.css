@@ -51,3 +51,12 @@ body{
     outline-color: darkgreen;
     
 }
+.build-table{
+    display: flex;
+}
+.add-table{
+    margin-right: 10px;
+}
+body{
+    order: 1;
+}
