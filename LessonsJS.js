@@ -3,6 +3,7 @@ class CalcTable {
     constructor(parentSelector) {
         this.parentSelector = parentSelector;
         this.parentElement = document.querySelector(parentSelector);
+        this.currenCell = null;
     }
     createTable(row, column) {
         row = Number(row);
@@ -24,52 +25,60 @@ class CalcTable {
                 td.innerHTML = "";
                 td.contentEditable = "true"
             }
-            //let lasttd = document.createElement('td')
-            //lasttd.classList.add('last-td')
-            //tr.appendChild(lasttd)
-            //lasttd.innerHTML="+"
         }
-
-        //let tr = document.createElement('tr');
-        //tr.classList.add('table__row');
-        //this.table.appendChild(tr);
-        //for(let i = 0; i<column+1; i++){
-        //let lasttd = document.createElement('td')
-        //lasttd.classList.add('last-td')
-        //tr.appendChild(lasttd)
-        //lasttd.innerHTML="+"
-        //}
-
-
-
-        this.table.onclick = this.clickcel.bind(this);
+        
+        this.table.oncontextmenu = this.onContextMenu.bind(this);
+        
+        this.table.onclick = this.closeContextMenu.bind(this);
         //this.table.onclick = this.newtd.bind(this);
     }
+    
+    onContextMenu(event){
+        event.preventDefault();
+        this.buildtable = new TableBuild('.contextMenu-table', this.table);
+        this.buildtable.tableBuild()
 
-
-
-
-    //Двойной клик
-    //let td = event.target.closest('td'); // (1)
-    //if (!td) return; // (2)
-    //if (!this.table.contains(td)) return;
-    //let inputclick = document.createElement('textarea');
-    //td.appendChild(inputclick);
-    clickcel(event) {
-        //console.log(this);
-        //this.createTable(this.row+1, this.column+1)
-        let td = event.target.closest('td'); // (1)
-        if (!td) return; // (2)
-        if (!this.table.contains(td)) return; // (3)
+        let tr = event.target.closest('td'); // (1)
+        if (!tr) return; // (2)
+        if (!this.table.contains(tr)) return; // (3)
         if (this.currenCell) {
+            let currentMenu = document.querySelector('.contextMenu-table');
+            currentMenu.style.left = event.clientX + "px"
+            currentMenu.style.top = event.clientY + "px"
+            currentMenu.style.display = 'block';
+        }
+        this.currenCell = tr;
+        }
+    /* closeContextMenu(event) {
+        let tr = event.target.closest('td'); // (1)
+        if (!tr) return; // (2)
+        if (!this.table.contains(tr)) return; // (3)
+        if (this.currenCell) {
+            let currentMenu = document.querySelector('.contextMenu-table');
+            currentMenu.style.display = 'none';
             this.currenCell.classList.remove("border-td");
         }
-        this.currenCell = td;
+        this.currenCell = tr;
         this.currenCell.classList.add("border-td");
-        //if(){
+    }*/
 
-        //}
+    addRowDawn() {
+        if (this.currenCell) {
+            let tr = document.createElement('tr');
+            tr.classList.add('table__row');
+            for (let j = 0; j < this.column; j++) {
+                let td = document.createElement('td');
+                td.classList.add('table__column');
+                tr.appendChild(td);
+                td.innerHTML = "";
+                td.contentEditable = "true"
+            }
+            let currentRow = this.currenCell.closest('tr');
+            //.insertBefore(tr, currentRow.nextSibling);
+            currentRow.insertAdjacentElement('afterend', tr);
+        }
     }
+
 }
 class TableBuild {
     constructor(parentSelector, table) {
@@ -78,35 +87,77 @@ class TableBuild {
         this.parentElement = document.querySelector(parentSelector);
     }
     tableBuild() {
-        this.buildtable = document.createElement('div');
-        this.buildtable.classList.add('build-table');
-        this.addTable = document.createElement('div');
-        this.addTable.innerHTML = "+";
-        this.addTable.classList.add('add-table');
-        this.deliteTable = document.createElement('div');
-        this.deliteTable.innerHTML = "-";
-        this.deliteTable.classList.add('delite-table');
-        this.parentElement.appendChild(this.buildtable);
-        this.buildtable.appendChild(this.addTable);
-        this.buildtable.appendChild(this.deliteTable);
-        this.buildtable.onclick = this.addTables.bind(this);
-        //this.buildtable.onclick = this.deliteTables.bind(this);
+        this.parentElement.innerHTML = "";
+        //this.contextMenuTable = document.createElement('div');
+        //this.contextMenuTable.classList.add('contextMenu-table');
+        this.pasteInTable = document.createElement('div');
+        this.pasteInTable.classList.add('paste-in-table');
+        this.pasteTableUnorderedList = document.createElement('ul');
+        this.pasteTableUnorderedList.classList.add('pasteTable_unordered-list');
+        this.pasteTableListItem = document.createElement('li');
+        this.pasteTableListItem.innerHTML = "Paste";
+        this.pasteTableListItem.classList.add('pasteTable_list-item');
+        this.addRowUp = document.createElement('button');
+        this.addRowUp.innerHTML = "Add Row Up";
+        this.addRowUp.classList.add("add-Row-Up", "pastebutton");
+        this.addRowDawn = document.createElement('button');
+        this.addRowDawn.innerHTML = "Add Row Dawn";
+        this.addRowDawn.classList.add("add-Row-Dawn", "pastebutton");
+        this.addColumnLeft = document.createElement('button');
+        this.addColumnLeft.innerHTML = "Add Column Left";
+        this.addColumnLeft.classList.add('add-column-Left',"pastebutton");
+        this.addColumnRight = document.createElement('button');
+        this.addColumnRight.innerHTML = "Add Column Right";
+        this.addColumnRight.classList.add('add-column-right',"pastebutton");
+        this.pasteInTable.appendChild(this.addRowUp);
+        this.pasteInTable.appendChild(this.addRowDawn);
+        this.pasteInTable.appendChild(this.addColumnLeft);
+        this.pasteInTable.appendChild(this.addColumnRight)
+        this.parentElement.appendChild(this.pasteTableUnorderedList);
+        this.pasteTableUnorderedList.appendChild(this.pasteTableListItem);
+        this.parentElement.appendChild(this.pasteInTable);
+
+        this.addRowUp.onclick = this.addTables.bind(this);
+        this.pasteTableUnorderedList.onclick = this.pastInTAble.bind(this);
     }
 
+    pastInTAble(event, counter){
+        this.counter = counter;
+        counter = 0;
+        counter++;
+        let pastintable = event.target.closest('.pasteTable_list-item'); // (1)
+        if (!pastintable) return; // (2)
+        if (!this.pasteTableUnorderedList.contains(pastintable)) return; // (3)
+        if (this.currenCell) {
+            let pastButton = document.querySelector('.paste-in-table');
+            if (counter % 2 === 0) {
+                pastButton.style.display = 'none';
+            }
+            else{
+                pastButton.style.display = 'block';
+            }
+            console.log(counter);
+            console.log("hi");
+            this.currenCell.classList.remove('.pasteTable_list-item');
+            this.currenCell.classList.toggle('pasteTable_list-item_active');
+        }
+        this.currenCell = pastintable;
+        
+        
+    }
     addTables(event) {
-        let addtable = event.target.closest('.add-table');
-        let delitetable = event.target.closest('.delite-table'); // (1)
-        if (!addtable && !delitetable) return; // (2)
-        if (!this.buildtable.contains(addtable) && !this.buildtable.contains(delitetable)) return; // (3)
+        let addtable = event.target.closest('.add-Row-Up');
+        if (!addtable ) return; // (2)
+        if (!this.pasteInTable.contains(addtable)) return; // (3)
         //console.log(this.table.createTable)
-        if(addtable){
-            this.table.createTable(this.table.row + 1, this.table.column + 1);
+        if (addtable) {
+            this.table.addRowDawn();
         }
         if (delitetable) {
             this.table.createTable(this.table.row - 1, this.table.column - 1);
         }
-        if (this.table.row < 0 && this.table.column < 0){
-            this.table.row =0;
+        if (this.table.row < 0 && this.table.column < 0) {
+            this.table.row = 0;
             this.table.column = 0;
         }
         //this.currenAdd = addtable;
@@ -138,8 +189,6 @@ class TableCreater {
     clickButton() {
         this.table = new CalcTable(this.parentSelector);
         this.table.createTable(this.inputRow.value, this.inputColumn.value);
-        this.buildtable = new TableBuild('.builds-table' ,this.table);
-        this.buildtable.tableBuild()
 
     }
 }

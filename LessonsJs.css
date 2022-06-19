@@ -1,8 +1,17 @@
+*{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
 body{
     background-color:white;
-    box-sizing: content-box;
+    position: relative;
+    
 }
 
+.create-table{
+    position: relative;
+}
 
 .table{
     max-width: 960px;
@@ -57,6 +66,70 @@ body{
 .add-table{
     margin-right: 10px;
 }
-body{
-    order: 1;
+
+.contextMenu-table{
+    width: 150px;
+    background-color: white;  
+    box-shadow: 0px 0px 20px silver;
+    border-radius: 10px;
+    position: absolute;
+    
+}
+.paste-in-table{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    display: none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: silver;
+
+}
+.pastebutton:hover{
+    
+    
+}
+.pastebutton{ 
+    background-color: silver;
+    border: none;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin-bottom: 7px;
+    margin-left: 15px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.pasteTable_list-item:hover{
+    border-radius: 10px;
+    cursor: pointer;
+}
+.pasteTable_list-item_active::before{
+    display: block; 
+    content: "";
+    border: 5px solid transparent;
+    border-left: 10px solid black;
+    position: absolute;
+    right: 16px;
+    top: 6px;
+    font-weight: bold;
+    font-size: 20px;
+    transform: rotate(207deg);
+}
+.pasteTable_list-item::before{
+    display: block;
+    content: "";
+    border: 5px solid transparent;
+    border-left: 10px solid black;
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-weight: bold;
+    font-size: 20px;
+}
+.pasteTable_list-item{
+    position: relative;
+    list-style: none;
+    padding: 5px 0 5px 15px;
+    text-transform: uppercase;
 }
